@@ -1,0 +1,24 @@
+title: Apicurio Registry Hello World
+subtitle: A minimal registry
+overview: |
+  An overview
+prerequisites: |
+  Some prerequisites
+sites:
+  apicurio:
+    title: Registry
+    platform: kubernetes
+    namespace: apicurio
+    env:
+      KUBECONFIG: ~/.kube/config-apicurio
+steps:
+  - standard: kubernetes/set_up_your_clusters
+  - title: Deploy Apicurio Registry
+    commands:
+      apicurio:
+        - run: "kubectl apply -f apicurio-deployment.yaml"
+
+  - title: Create a service
+    commands:
+      apicurio:
+        - run: "kubectl apply -f apicurio-service.yaml"

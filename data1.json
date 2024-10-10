@@ -1,0 +1,10 @@
+{
+    "type": "record",
+    "name": "price",
+    "namespace": "com.example",
+    "fields": [
+      {"name": "symbol", "type": "string"},
+      {"name": "price", "type": "string"}
+    ]
+  }
+  

@@ -19,11 +19,11 @@
 
 example_suite: |
     This example is part of a [suite of examples][examples] showing the
-    different ways you can use [Skupper][website] to connect services
-    across cloud providers, data centers, and edge sites.
+    different ways you can use [Apicurio Registry][website] a high performance, 
+    runtime registry for API designs and schemas .
 
-    [website]: https://skupper.io/
-    [examples]: https://skupper.io/examples/index.html
+    [website]: https://www.apicur.io/
+    [examples]: https://www.apicur.io/examples/index.html
 prerequisites: |
     * The `kubectl` command-line tool, version 1.15 or later
       ([installation guide][install-kubectl])
@@ -34,10 +34,10 @@ prerequisites: |
     [install-kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
     [kube-providers]: https://skupper.io/start/kubernetes.html
 next_steps: |
-    Check out the other [examples][examples] on the Skupper website.
+    Check out the other [examples][examples] on the Apicurio Registry website.
 about_this_example: |
     This example was produced using [Skewer][skewer], a library for
-    documenting and testing Skupper examples.
+    documenting and testing examples.
 
     [skewer]: https://github.com/skupperproject/skewer
 

@@ -89,11 +89,10 @@ general/cleaning_up:
     "*":
       - run: skupper delete
 kubernetes/set_up_your_clusters:
-  title: Set up your clusters
+  title: Set up your cluster
   platform: kubernetes
   preamble: |
-    Skupper is designed for use with multiple Kubernetes clusters.
-    The `skupper` and `kubectl` commands use your
+    Set up the `kubectl` command to use your
     [kubeconfig][kubeconfig] and current context to select the cluster
     and namespace where they operate.
 
@@ -106,11 +105,6 @@ kubernetes/set_up_your_clusters:
     A single kubeconfig supports only one active context per user.
     Since you will be using multiple contexts at once in this
     exercise, you need to create distinct kubeconfigs.
-
-    For each namespace, open a new terminal window.  In each terminal,
-    set the `KUBECONFIG` environment variable to a different path and
-    log in to your cluster.  Then create the namespace you wish to use
-    and set the namespace on your current context.
 
     **Note:** The login procedure varies by provider.  See the
     documentation for yours:

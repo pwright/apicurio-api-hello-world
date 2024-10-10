@@ -1,9 +1,15 @@
 title: Apicurio Registry Hello World
 subtitle: A minimal registry
 overview: |
-  An overview
+  In this example, we'll run Apicurio Registry and populate it with a few 
+  schemas using the API.
+  Then, we use the API to query the 
 prerequisites: |
-  Some prerequisites
+  Access to a Kubernetes cluster. If you don't have access, skip the setup
+  steps and use Docker to set up Apicurio Registry as described in 
+  ([Using Docker][getting-started])
+  [getting-started]: https://www.apicur.io/registry/docs/apicurio-registry/2.6.x/getting-started/assembly-installing-registry-docker.html
+  
 sites:
   apicurio:
     title: Registry
@@ -18,7 +24,31 @@ steps:
       apicurio:
         - run: "kubectl apply -f apicurio-deployment.yaml"
 
-  - title: Create a service
+  - title: Expose the Registry
     commands:
       apicurio:
-        - run: "kubectl apply -f apicurio-service.yaml"
+        - await_resource: deployment/apicurio-registry
+        - run: kubectl port-forward deployment/apicurio-registry 8080:8080
+          apply: readme
+        - run: kubectl port-forward deployment/apicurio-registry 8080:8080 > /dev/null &
+          apply: test
+  - title: Populate the Registry
+    commands:
+      apicurio:
+        - run: read -p "Navigate to http://localhost:8080 and then press enter to continue" dummy
+        - run: 'curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data @data1.json http://localhost:8080/apis/registry/v2/groups/my-group/artifacts'
+        - output: |
+            {"contentId":1,"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
+            "globalId":1,"groupId":"my-group","id":"share-price","modifiedBy":"",
+            "modifiedOn":"2024-10-10T14:15:05+0000","name":"price","references":[],
+            "state":"ENABLED","type":"AVRO","version":"1"}
+
+  - title: Query the Registry
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/search/artifacts?name=share-price"   -H "Accept: application/json"'
+        - output: |
+            {"artifacts":[{"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
+            "groupId":"my-group","id":"share-price","modifiedBy":"",
+            "modifiedOn":"2024-10-10T14:15:05+0000","name":"price","state":"ENABLED",
+            "type":"AVRO"}],"count":1}

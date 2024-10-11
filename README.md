@@ -21,6 +21,7 @@ runtime registry for API designs and schemas .
 * [Step 2: Deploy Apicurio Registry](#step-2-deploy-apicurio-registry)
 * [Step 3: Expose the Registry](#step-3-expose-the-registry)
 * [Step 4: Populate the Registry](#step-4-populate-the-registry)
+* [Step 5: Query the Registry](#step-5-query-the-registry)
 * [Next steps](#next-steps)
 * [About this example](#about-this-example)
 
@@ -74,6 +75,9 @@ kubectl config set-context --current --namespace apicurio
 
 ## Step 2: Deploy Apicurio Registry
 
+The `apicurio-deployment.yaml` file defines a Kubernetes deployment
+for Apicurio registry and exposes the console and API through 8080.
+
 _**Registry:**_
 
 ~~~ shell
@@ -81,6 +85,9 @@ kubectl apply -f apicurio-deployment.yaml
 ~~~
 
 ## Step 3: Expose the Registry
+
+To make the console and API available to external traffic
+you need to port forward 8080.
 
 _**Registry:**_
 
@@ -90,10 +97,44 @@ kubectl port-forward deployment/apicurio-registry 8080:8080
 
 ## Step 4: Populate the Registry
 
+The `data1.json` file defines an AVRO schema.
+You can define a group `my-group` as you submit it to the API.
+
 _**Registry:**_
 
 ~~~ shell
-curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data '{"type":"record","name":"price","namespace":"com.example","fields":[{"name":"symbol","type":"string"},{"name":"price","type":"string"}]}' http://localhost:8080/apis/registry/v2/groups/my-group/artifacts
+curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data @data1.json http://localhost:8080/apis/registry/v2/groups/my-group/artifacts
+~~~
+
+_Sample output:_
+
+~~~ console
+$ curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data @data1.json http://localhost:8080/apis/registry/v2/groups/my-group/artifacts
+{"contentId":1,"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
+"globalId":1,"groupId":"my-group","id":"share-price","modifiedBy":"",
+"modifiedOn":"2024-10-10T14:15:05+0000","name":"price","references":[],
+"state":"ENABLED","type":"AVRO","version":"1"}
+~~~
+
+## Step 5: Query the Registry
+
+You can search on an artifact name using a GET query,
+however the results might not contain the metadata you require.
+
+_**Registry:**_
+
+~~~ shell
+curl -X GET "http://localhost:8080/apis/registry/v2/search/artifacts?name=share-price"   -H "Accept: application/json"
+~~~
+
+_Sample output:_
+
+~~~ console
+$ curl -X GET "http://localhost:8080/apis/registry/v2/search/artifacts?name=share-price"   -H "Accept: application/json"
+{"artifacts":[{"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
+"groupId":"my-group","id":"share-price","modifiedBy":"",
+"modifiedOn":"2024-10-10T14:15:05+0000","name":"price","state":"ENABLED",
+"type":"AVRO"}],"count":1}
 ~~~
 
 ## Next steps

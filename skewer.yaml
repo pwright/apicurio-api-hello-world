@@ -20,11 +20,18 @@ sites:
 steps:
   - standard: kubernetes/set_up_your_clusters
   - title: Deploy Apicurio Registry
+    preamble: |
+      The `apicurio-deployment.yaml` file defines a Kubernetes deployment
+      for Apicurio registry and exposes the console and API through 8080.
     commands:
       apicurio:
         - run: "kubectl apply -f apicurio-deployment.yaml"
 
   - title: Expose the Registry
+    preamble: |
+      To make the console and API available to external traffic
+      you need to port forward 8080.
+
     commands:
       apicurio:
         - await_resource: deployment/apicurio-registry
@@ -33,21 +40,31 @@ steps:
         - run: kubectl port-forward deployment/apicurio-registry 8080:8080 > /dev/null &
           apply: test
   - title: Populate the Registry
+
+    preamble: |
+      The `data1.json` file defines an AVRO schema.
+      You can define a group `my-group` as you submit it to the API.
+
     commands:
       apicurio:
-        - run: read -p "Navigate to http://localhost:8080 and then press enter to continue" dummy
+        - run: sleep 5
+          apply: test
         - run: 'curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data @data1.json http://localhost:8080/apis/registry/v2/groups/my-group/artifacts'
-        - output: |
+          output: |
             {"contentId":1,"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
             "globalId":1,"groupId":"my-group","id":"share-price","modifiedBy":"",
             "modifiedOn":"2024-10-10T14:15:05+0000","name":"price","references":[],
             "state":"ENABLED","type":"AVRO","version":"1"}
 
   - title: Query the Registry
+    preamble: |
+      You can search on an artifact name using a GET query,
+      however the results might not contain the metadata you require.
+
     commands:
       apicurio:
         - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/search/artifacts?name=share-price"   -H "Accept: application/json"'
-        - output: |
+          output: |
             {"artifacts":[{"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
             "groupId":"my-group","id":"share-price","modifiedBy":"",
             "modifiedOn":"2024-10-10T14:15:05+0000","name":"price","state":"ENABLED",

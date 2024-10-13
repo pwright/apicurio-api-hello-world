@@ -22,6 +22,10 @@ runtime registry for API designs and schemas .
 * [Step 3: Expose the Registry](#step-3-expose-the-registry)
 * [Step 4: Populate the Registry](#step-4-populate-the-registry)
 * [Step 5: Query the Registry](#step-5-query-the-registry)
+* [Step 6: Get the artifact content using ID](#step-6-get-the-artifact-content-using-id)
+* [Step 7: Get the artifact metadata using ID](#step-7-get-the-artifact-metadata-using-id)
+* [Step 8: Get the artifact content using global ID](#step-8-get-the-artifact-content-using-global-id)
+* [Summary](#summary)
 * [Next steps](#next-steps)
 * [About this example](#about-this-example)
 
@@ -137,9 +141,81 @@ $ curl -X GET "http://localhost:8080/apis/registry/v2/search/artifacts?name=shar
 "type":"AVRO"}],"count":1}
 ~~~
 
+The response includes the artifact's `id` but not the content or global ID.
+
+## Step 6: Get the artifact content using ID
+
+You can now retrieve the content of the artifact using the group and id
+using the following pattern `http://<registry-url>/apis/registry/v2/groups/<groupId>/artifacts/<artifactId>`
+
+_**Registry:**_
+
+~~~ shell
+curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price" -H "Accept: application/json"
+~~~
+
+_Sample output:_
+
+~~~ console
+$ curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price" -H "Accept: application/json"
+{ "type": "record", "name": "price", "namespace": "com.example", 
+"fields": [ {"name": "symbol", "type": "string"}, 
+{"name": "price", "type": "string"}]}
+~~~
+
+The response does not include any metadata.
+
+## Step 7: Get the artifact metadata using ID
+
+You can now retrieve the metadata of the artifact using the group and id
+using the following pattern `http://<registry-url>/apis/registry/v2/groups/<groupId>/artifacts/<artifactId>/meta`
+
+_**Registry:**_
+
+~~~ shell
+curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price/meta" -H "Accept: application/json"
+~~~
+
+_Sample output:_
+
+~~~ console
+$ curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price/meta" -H "Accept: application/json"
+{"contentId":1,"createdBy":"","createdOn":"2024-10-13T14:24:41+0000",
+"globalId":1,"groupId":"my-group","id":"share-price","modifiedBy":"",
+"modifiedOn":"2024-10-13T14:24:41+0000","name":"price","references":[],
+"state":"ENABLED","type":"AVRO","version":"1"}
+~~~
+
+## Step 8: Get the artifact content using global ID
+
+You can now retrieve the content of the artifact using the global id
+using the following pattern `http://<registry-url>/apis/registry/v2/ids/globalIds/<globalId>`
+
+_**Registry:**_
+
+~~~ shell
+curl -X GET "http://localhost:8080/apis/registry/v2/ids/globalIds/1" -H "Accept: application/json"
+~~~
+
+_Sample output:_
+
+~~~ console
+$ curl -X GET "http://localhost:8080/apis/registry/v2/ids/globalIds/1" -H "Accept: application/json"
+{ "type": "record", "name": "price", "namespace": "com.example", 
+"fields": [ {"name": "symbol", "type": "string"}, 
+{"name": "price", "type": "string"}]}
+~~~
+
+## Summary
+
+In this example, after searching the registry you could get:
+* Content: GET /groups/{groupId}/artifacts/{artifactId}
+* Metadata: GET /groups/{groupId}/artifacts/{artifactId}/meta
+* Global ID (if known): GET /ids/globalIds/{globalId}
+
 ## Next steps
 
-Check out the other [examples][examples] on the Apicurio Registry website.
+Explore more API calls using [Apicurio Registry v2 API UI](http://localhost:8080/apis/registry/v2).
 
 ## About this example
 

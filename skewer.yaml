@@ -47,7 +47,7 @@ steps:
 
     commands:
       apicurio:
-        - run: sleep 5
+        - run: sleep 12
           apply: test
         - run: 'curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data @data1.json http://localhost:8080/apis/registry/v2/groups/my-group/artifacts'
           output: |
@@ -69,3 +69,51 @@ steps:
             "groupId":"my-group","id":"share-price","modifiedBy":"",
             "modifiedOn":"2024-10-10T14:15:05+0000","name":"price","state":"ENABLED",
             "type":"AVRO"}],"count":1}
+    postamble: |
+      The response includes the artifact's `id` but not the content or global ID.
+
+  - title: Get the artifact content using ID
+    preamble: |
+      You can now retrieve the content of the artifact using the group and id
+      using the following pattern `http://<registry-url>/apis/registry/v2/groups/<groupId>/artifacts/<artifactId>`
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price" -H "Accept: application/json"'
+          output: |
+            { "type": "record", "name": "price", "namespace": "com.example", 
+            "fields": [ {"name": "symbol", "type": "string"}, 
+            {"name": "price", "type": "string"}]} 
+    postamble: |
+      The response does not include any metadata.
+
+  - title: Get the artifact metadata using ID
+    preamble: |
+      You can now retrieve the metadata of the artifact using the group and id
+      using the following pattern `http://<registry-url>/apis/registry/v2/groups/<groupId>/artifacts/<artifactId>/meta`
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price/meta" -H "Accept: application/json"'
+          output: |
+            {"contentId":1,"createdBy":"","createdOn":"2024-10-13T14:24:41+0000",
+            "globalId":1,"groupId":"my-group","id":"share-price","modifiedBy":"",
+            "modifiedOn":"2024-10-13T14:24:41+0000","name":"price","references":[],
+            "state":"ENABLED","type":"AVRO","version":"1"}
+
+  - title: Get the artifact content using global ID
+    preamble: |
+      You can now retrieve the content of the artifact using the global id
+      using the following pattern `http://<registry-url>/apis/registry/v2/ids/globalIds/<globalId>`
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/ids/globalIds/1" -H "Accept: application/json"'
+          output: |
+            { "type": "record", "name": "price", "namespace": "com.example", 
+            "fields": [ {"name": "symbol", "type": "string"}, 
+            {"name": "price", "type": "string"}]} 
+summary: |
+  In this example, after searching the registry you could get:
+  * Content: GET /groups/{groupId}/artifacts/{artifactId}
+  * Metadata: GET /groups/{groupId}/artifacts/{artifactId}/meta
+  * Global ID (if known): GET /ids/globalIds/{globalId}
+next_steps: |
+  Explore more API calls using [Apicurio Registry v2 API UI](http://localhost:8080/apis/registry/v2).

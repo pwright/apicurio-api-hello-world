@@ -102,7 +102,10 @@ kubectl port-forward deployment/apicurio-registry 8080:8080
 ## Step 4: Populate the Registry
 
 The `data1.json` file defines an AVRO schema.
+Posting this file to the API creates an artifact.
 You can define a group `my-group` as you submit it to the API.
+Alternatively, replace `my-group` with `default` to not associate the
+artifact with a group.
 
 _**Registry:**_
 

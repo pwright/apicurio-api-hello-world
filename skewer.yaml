@@ -8,7 +8,7 @@ prerequisites: |
   Access to a Kubernetes cluster. If you don't have access, skip the setup
   steps and use Docker to set up Apicurio Registry as described in 
   ([Using Docker][getting-started])
-  [getting-started]: https://www.apicur.io/registry/docs/apicurio-registry/2.6.x/getting-started/assembly-installing-registry-docker.html
+  [getting-started]: https://www.apicur.io/registry/docs/apicurio-registry/3.0.x/getting-started/assembly-managing-registry-artifacts-api.html
   
 sites:
   apicurio:

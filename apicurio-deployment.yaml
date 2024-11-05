@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: apicurio-registry
-        image: apicurio/apicurio-registry-mem:latest-release
+        image: apicurio/apicurio-registry:latest-release
         ports:
         - containerPort: 8080

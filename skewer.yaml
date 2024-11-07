@@ -5,27 +5,25 @@ overview: |
   schemas using the API.
   Then, we use the API to query the 
 prerequisites: |
-  Access to a Kubernetes cluster. If you don't have access, skip the setup
-  steps and use Docker to set up Apicurio Registry as described in 
-  ([Using Docker][getting-started])
-  [getting-started]: https://www.apicur.io/registry/docs/apicurio-registry/3.0.x/getting-started/assembly-managing-registry-artifacts-api.html
+  Docker or podman to set up Apicurio Registry as described in 
+  [Installing Apicurio Registry using Docker](https://www.apicur.io/registry/docs/apicurio-registry/3.0.x/getting-started/assembly-installing-registry-docker.html)
   
 sites:
   apicurio:
     title: Registry
-    platform: kubernetes
+    platform: podman
     namespace: apicurio
     env:
-      KUBECONFIG: ~/.kube/config-apicurio
+      SKUPPER_PLATFORM: podman
 steps:
-  - standard: kubernetes/set_up_your_clusters
   - title: Deploy Apicurio Registry
     preamble: |
       The `apicurio-deployment.yaml` file defines a Kubernetes deployment
       for Apicurio registry and exposes the console and API through 8080.
     commands:
       apicurio:
-        - run: "kubectl apply -f apicurio-deployment.yaml"
+        - run: "docker compose up"
+        - run: "read hello"
 
   - title: Expose the Registry
     preamble: |

@@ -20,6 +20,7 @@
 from plano import *
 from plano.github import *
 from skewer import *
+from skewer import Minikube
 
 _debug_param = CommandParameter("debug", help="Produce extra debug output on failure")
 
@@ -57,10 +58,15 @@ def run_(*kubeconfigs, debug=False):
 
     If no kubeconfigs are provided, Skewer starts a local Minikube
     instance and runs the steps using it.
+
+    If SKEWER_DEMO_BASH is set, no cluster is created, and steps are run without a cluster.
     """
-    if not kubeconfigs:
-        with Minikube("skewer.yaml") as mk:
-            run_steps("skewer.yaml", kubeconfigs=mk.kubeconfigs, work_dir=mk.work_dir, debug=debug)
+    if 'SKEWER_DEMO_BASH' in ENV:
+        notice("Running steps without creating a cluster due to SKEWER_DEMO_BASH")
+        run_steps("skewer.yaml", kubeconfigs=[], debug=debug)
+    elif not kubeconfigs:
+        with Cluster("skewer.yaml") as cluster:
+            run_steps("skewer.yaml", kubeconfigs=cluster.kubeconfigs, work_dir=cluster.work_dir, debug=debug)
     else:
         run_steps("skewer.yaml", kubeconfigs=kubeconfigs, debug=debug)
 
@@ -71,6 +77,23 @@ def demo(*kubeconfigs, debug=False):
     """
     with working_env(SKEWER_DEMO=1):
         run_(*kubeconfigs, debug=debug)
+
+@command(parameters=[_debug_param])
+def demokind(*kubeconfigs, debug=False):
+    """
+    Run the example steps using kind and pause for a demo before cleaning up
+    """
+    with working_env(SKEWER_DEMO_KIND=1):
+        run_(*kubeconfigs, debug=debug)
+
+@command(parameters=[_debug_param])
+def demobash(*kubeconfigs, debug=False):
+    """
+    Run the example steps using bash and pause for a demo before cleaning up
+    """
+    with working_env(SKEWER_DEMO_BASH=1):
+        run_(*kubeconfigs, debug=debug)
+
 
 @command(parameters=[_debug_param])
 def test_(debug=False):
@@ -87,5 +110,20 @@ def update_skewer():
 
     This results in local changes to review and commit.
     """
-    update_external_from_github("external/skewer", "skupperproject", "skewer")
+    update_external_from_github("external/skewer", "skupperproject", "skewer", "v2")
     copy("external/skewer/config/.github/workflows/main.yaml", ".github/workflows/main.yaml")
+
+
+@command
+def create_kind_cluster(debug=False):
+    '''
+    Create a Kind cluster for demo mode
+    '''
+    run("kind create cluster --name demo-kind", shell=True)
+
+    if debug:
+        print("Debug: Kind cluster created")
+
+    # Additional setup steps for the demo mode, if any, can be added here.
+    print("Kind cluster created for demo mode")
+

@@ -1,0 +1,1 @@
+curl https://raw.githubusercontent.com/Apicurio/apicurio-registry/refs/heads/main/examples/docker-compose/src/main/resources/docker-compose.apicurio.yml > docker-compose.yml

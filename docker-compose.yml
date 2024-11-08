@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: apicurio-registry
+      POSTGRES_PASSWORD: password
+  ui:
+    image: quay.io/apicurio/apicurio-registry-ui:latest-release
+    environment:
+      REGISTRY_API_URL: "http://localhost:8080/apis/registry/v3"
+    ports:
+      - 8888:8080
+  app:
+    image: apicurio/apicurio-registry:latest-release
+    ports:
+      - 8080:8080
+    environment:
+      APICURIO_DATASOURCE_URL: 'jdbc:postgresql://postgres/apicurio-registry'
+      APICURIO_DATASOURCE_USERNAME: apicurio-registry
+      APICURIO_DATASOURCE_PASSWORD: password
+      APICURIO_STORAGE_KIND: "sql"
+      APICURIO_STORAGE_SQL_KIND: "postgresql"
+    depends_on:
+      - postgres

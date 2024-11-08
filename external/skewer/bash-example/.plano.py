@@ -17,24 +17,4 @@
 # under the License.
 #
 
-example_suite: |
-    
-prerequisites: |
-
-next_steps: |
-    Check out Skewer at [Skewer][skewer], a library for
-    documenting and testing Skupper examples.
-
-    [skewer]: https://github.com/skupperproject/skewer
-about_this_example: |
-    This example was produced using [Skewer][skewer], a library for
-    documenting and testing Skupper examples.
-
-    [skewer]: https://github.com/skupperproject/skewer
-
-    Skewer provides utility functions for generating the README and
-    running the example steps.  Use the `./plano` command in the project
-    root to see what is available.
-
-    To quickly stand up the example using Minikube, try the `./plano demo`
-    command.
+from skewer.planocommands import *

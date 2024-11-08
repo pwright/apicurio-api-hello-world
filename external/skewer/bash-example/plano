@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -17,24 +18,11 @@
 # under the License.
 #
 
-example_suite: |
-    
-prerequisites: |
+import sys
 
-next_steps: |
-    Check out Skewer at [Skewer][skewer], a library for
-    documenting and testing Skupper examples.
+sys.path.insert(0, "python")
 
-    [skewer]: https://github.com/skupperproject/skewer
-about_this_example: |
-    This example was produced using [Skewer][skewer], a library for
-    documenting and testing Skupper examples.
+from plano import PlanoCommand
 
-    [skewer]: https://github.com/skupperproject/skewer
-
-    Skewer provides utility functions for generating the README and
-    running the example steps.  Use the `./plano` command in the project
-    root to see what is available.
-
-    To quickly stand up the example using Minikube, try the `./plano demo`
-    command.
+if __name__ == "__main__":
+    PlanoCommand().main()

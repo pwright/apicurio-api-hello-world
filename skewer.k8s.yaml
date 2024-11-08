@@ -1,0 +1,122 @@
+title: Apicurio Registry Hello World
+subtitle: A minimal registry
+overview: |
+  In this example, we'll run Apicurio Registry and populate it with a few 
+  schemas using the API.
+  Then, we use the API to query the 
+prerequisites: |
+  Access to a Kubernetes cluster. If you don't have access, skip the setup
+  steps and use Docker to set up Apicurio Registry as described in 
+  ([Using Docker][getting-started])
+  [getting-started]: https://www.apicur.io/registry/docs/apicurio-registry/3.0.x/getting-started/assembly-managing-registry-artifacts-api.html
+  
+sites:
+  apicurio:
+    title: Registry
+    platform: kubernetes
+    namespace: apicurio
+    env:
+      KUBECONFIG: ~/.kube/config-apicurio
+steps:
+  - standard: kubernetes/set_up_your_clusters
+  - title: Deploy Apicurio Registry
+    preamble: |
+      The `apicurio-deployment.yaml` file defines a Kubernetes deployment
+      for Apicurio registry and exposes the console and API through 8080.
+    commands:
+      apicurio:
+        - run: "kubectl apply -f apicurio-deployment.yaml"
+
+  - title: Expose the Registry
+    preamble: |
+      To make the console and API available to external traffic
+      you need to port forward 8080.
+
+    commands:
+      apicurio:
+        - await_resource: deployment/apicurio-registry
+        - run: kubectl port-forward deployment/apicurio-registry 8080:8080
+          apply: readme
+        - run: kubectl port-forward deployment/apicurio-registry 8080:8080 > /dev/null &
+          apply: test
+  - title: Populate the Registry
+
+    preamble: |
+      The `data1.json` file defines an AVRO schema.
+      Posting this file to the API creates an artifact.
+      You can define a group `my-group` as you submit it to the API.
+      Alternatively, replace `my-group` with `default` to not associate the
+      artifact with a group.
+
+    commands:
+      apicurio:
+        - run: sleep 12
+          apply: test
+        - run: 'curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data @data1.json http://localhost:8080/apis/registry/v2/groups/my-group/artifacts'
+          output: |
+            {"contentId":1,"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
+            "globalId":1,"groupId":"my-group","id":"share-price","modifiedBy":"",
+            "modifiedOn":"2024-10-10T14:15:05+0000","name":"price","references":[],
+            "state":"ENABLED","type":"AVRO","version":"1"}
+
+  - title: Query the Registry
+    preamble: |
+      You can search on an artifact name using a GET query,
+      however the results might not contain the metadata you require.
+
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/search/artifacts?name=share-price"   -H "Accept: application/json"'
+          output: |
+            {"artifacts":[{"createdBy":"","createdOn":"2024-10-10T14:15:05+0000",
+            "groupId":"my-group","id":"share-price","modifiedBy":"",
+            "modifiedOn":"2024-10-10T14:15:05+0000","name":"price","state":"ENABLED",
+            "type":"AVRO"}],"count":1}
+    postamble: |
+      The response includes the artifact's `id` but not the content or global ID.
+
+  - title: Get the artifact content using ID
+    preamble: |
+      You can now retrieve the content of the artifact using the group and id
+      using the following pattern `http://<registry-url>/apis/registry/v2/groups/<groupId>/artifacts/<artifactId>`
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price" -H "Accept: application/json"'
+          output: |
+            { "type": "record", "name": "price", "namespace": "com.example", 
+            "fields": [ {"name": "symbol", "type": "string"}, 
+            {"name": "price", "type": "string"}]} 
+    postamble: |
+      The response does not include any metadata.
+
+  - title: Get the artifact metadata using ID
+    preamble: |
+      You can now retrieve the metadata of the artifact using the group and id
+      using the following pattern `http://<registry-url>/apis/registry/v2/groups/<groupId>/artifacts/<artifactId>/meta`
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/groups/my-group/artifacts/share-price/meta" -H "Accept: application/json"'
+          output: |
+            {"contentId":1,"createdBy":"","createdOn":"2024-10-13T14:24:41+0000",
+            "globalId":1,"groupId":"my-group","id":"share-price","modifiedBy":"",
+            "modifiedOn":"2024-10-13T14:24:41+0000","name":"price","references":[],
+            "state":"ENABLED","type":"AVRO","version":"1"}
+
+  - title: Get the artifact content using global ID
+    preamble: |
+      You can now retrieve the content of the artifact using the global id
+      using the following pattern `http://<registry-url>/apis/registry/v2/ids/globalIds/<globalId>`
+    commands:
+      apicurio:
+        - run: 'curl -X GET "http://localhost:8080/apis/registry/v2/ids/globalIds/1" -H "Accept: application/json"'
+          output: |
+            { "type": "record", "name": "price", "namespace": "com.example", 
+            "fields": [ {"name": "symbol", "type": "string"}, 
+            {"name": "price", "type": "string"}]} 
+summary: |
+  In this example, after searching the registry you could get:
+  * Content: GET /groups/{groupId}/artifacts/{artifactId}
+  * Metadata: GET /groups/{groupId}/artifacts/{artifactId}/meta
+  * Global ID (if known): GET /ids/globalIds/{globalId}
+next_steps: |
+  Explore more API calls using [Apicurio Registry v2 API UI](http://localhost:8080/apis/registry/v2).

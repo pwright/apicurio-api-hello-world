@@ -26,36 +26,13 @@ sites:
 steps:
   - title: Deploy Apicurio Registry
     preamble: |
-      The `apicurio-deployment.yaml` file defines a Kubernetes deployment
-      for Apicurio registry and exposes the console and API through 8080.
+      The `docker-compose.yml` file defines a deployment
+      for Apicurio registry. The YAML exposes the console 
+      through 888 and the API through 8080.
     commands:
       infrastructure:
-        - run: docker compose up  > /dev/null &
-        - run: docker compose up  > /dev/null &
-          apply: test
+        - run: docker-compose up -d
 
-
-  - title: Configure Apicurio Registry
-    preamble: |
-      The `apicurio-deployment.yaml` file defines a Kubernetes deployment
-      for Apicurio registry and exposes the console and API through 8080.
-    commands:
-      config:
-        - run: "read hello"
-        - run: "docker compose down"
-
-  - title: Expose the Registry
-    preamble: |
-      To make the console and API available to external traffic
-      you need to port forward 8080.
-
-    commands:
-      config:
-        - await_resource: deployment/apicurio-registry
-        - run: kubectl port-forward deployment/apicurio-registry 8080:8080
-          apply: readme
-        - run: kubectl port-forward deployment/apicurio-registry 8080:8080 > /dev/null &
-          apply: test
   - title: Populate the Registry
 
     preamble: |
@@ -67,7 +44,7 @@ steps:
 
     commands:
       config:
-        - run: sleep 12
+        - run: ./wait-for-service.sh
           apply: test
         - run: 'curl -X POST -H "Content-type: application/json; artifactType=AVRO" -H "X-Registry-ArtifactId: share-price" --data @data1.json http://localhost:8080/apis/registry/v2/groups/my-group/artifacts'
           output: |

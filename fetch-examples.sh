@@ -29,3 +29,5 @@ echo "Cleaning up temporary files..."
 #rm -rf "$TMP_DIR"
 
 echo "Download complete. Files are in $DEST_DIR."
+
+find . -name "pom.xml" -exec sed -i.bak 's/<version>3.0.4-SNAPSHOT<\/version>/<version>3.0.3<\/version>/g' {} +

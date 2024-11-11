@@ -4,37 +4,26 @@
   <parent>
     <groupId>io.apicurio</groupId>
     <artifactId>apicurio-registry-examples</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>apicurio-registry-examples-simple-protobuf</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>apicurio-registry-examples-protobuf-validation</artifactId>
 
   <properties>
     <projectRoot>${project.basedir}/../..</projectRoot>
-    <proto-plugin.version>0.6.1</proto-plugin.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>io.apicurio</groupId>
-      <artifactId>apicurio-registry-protobuf-serde-kafka</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.kafka</groupId>
-      <artifactId>kafka-clients</artifactId>
-      <version>${kafka.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.strimzi</groupId>
-      <artifactId>kafka-oauth-client</artifactId>
-      <version>0.15.0</version>
+      <artifactId>apicurio-registry-schema-validation-protobuf</artifactId>
+      <version>${apicurio-registry-schema-validation.version}</version>
     </dependency>
   </dependencies>
 
   <build>
+
     <plugins>
       <plugin>
         <groupId>kr.motd.maven</groupId>
@@ -69,6 +58,7 @@
         </executions>
       </plugin>
     </plugins>
+
   </build>
 
 </project>

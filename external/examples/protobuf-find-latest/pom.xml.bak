@@ -4,26 +4,22 @@
   <parent>
     <groupId>io.apicurio</groupId>
     <artifactId>apicurio-registry-examples</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>apicurio-registry-examples-simple-avro-maven</artifactId>
+  <artifactId>apicurio-registry-examples-protobuf-find-latest</artifactId>
   <packaging>jar</packaging>
 
   <properties>
     <projectRoot>${project.basedir}/../..</projectRoot>
+    <proto-plugin.version>0.6.1</proto-plugin.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>io.apicurio</groupId>
-      <artifactId>apicurio-registry-avro-serde-kafka</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.apicurio</groupId>
-      <artifactId>apicurio-registry-java-sdk</artifactId>
+      <artifactId>apicurio-registry-protobuf-serde-kafka</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -36,40 +32,44 @@
       <artifactId>kafka-oauth-client</artifactId>
       <version>0.15.0</version>
     </dependency>
-    <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <version>2.1.1</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>io.apicurio</groupId>
-        <artifactId>apicurio-registry-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.7.1</version>
         <executions>
           <execution>
-            <id>register-artifact</id>
             <goals>
-              <goal>register</goal>
+              <goal>detect</goal>
             </goals>
+            <phase>initialize</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.xolstice.maven.plugins</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <version>${proto-plugin.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>gencode</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <phase>generate-sources</phase>
             <configuration>
-              <registryUrl>http://localhost:8080/apis/registry/v3</registryUrl>
-              <artifacts>
-                <artifact>
-                  <groupId>default</groupId>
-                  <artifactId>SimpleAvroMavenExample-value</artifactId>
-                  <artifactType>AVRO</artifactType>
-                  <file>${project.basedir}/src/main/resources/schemas/greeting.avsc</file>
-                </artifact>
-              </artifacts>
+              <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
+
   </build>
+
 </project>

@@ -4,11 +4,11 @@
   <parent>
     <groupId>io.apicurio</groupId>
     <artifactId>apicurio-registry-examples</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>apicurio-registry-examples-rest-client</artifactId>
+  <artifactId>apicurio-registry-examples-jsonschema-validation</artifactId>
   <packaging>jar</packaging>
 
   <properties>
@@ -18,20 +18,8 @@
   <dependencies>
     <dependency>
       <groupId>io.apicurio</groupId>
-      <artifactId>apicurio-registry-java-sdk</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.apicurio</groupId>
-      <artifactId>apicurio-common-rest-client-vertx</artifactId>
-      <version>${apicurio-common-rest-client.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${slf4j.version}</version>
+      <artifactId>apicurio-registry-schema-validation-jsonschema</artifactId>
+      <version>${apicurio-registry-schema-validation.version}</version>
     </dependency>
   </dependencies>
 
